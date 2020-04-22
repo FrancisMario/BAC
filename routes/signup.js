@@ -184,7 +184,7 @@ router.delete('/logout', (req, res) => {
 
 //Generate Access Token
 function generateAccessToken(loggedUser) {
-  return jwt.sign(loggedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
+  return jwt.sign(loggedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
 }
 
 /* The function below is gonna be added as a middleware
