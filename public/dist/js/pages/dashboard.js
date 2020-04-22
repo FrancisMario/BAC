@@ -179,7 +179,7 @@ $(function () {
     ],
     datasets: [
       {
-        data: [30,12,20],
+        data: [1,3,5],
         backgroundColor : ['#f56954', '#00a65a', '#f39c12'],
       }
     ]

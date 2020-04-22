@@ -1,0 +1,19 @@
+<div class="row">
+{{#each stat as |stat|}}
+          <div class="col-lg-3 col-6">
+            <!-- small box -->
+            <div class="small-box {{stat.color}}">
+              <div class="inner">
+                <h3>{{stat.figure}}</h3>
+
+                <p>{{stat.name}}</p>
+              </div>
+              <div class="icon">
+                <i class="ion {{stat.icon}}"></i>
+              </div>
+              <a href="{{stat.link}}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+            </div>
+          </div>
+          <!-- ./col -->
+{{/each}}
+</div>
