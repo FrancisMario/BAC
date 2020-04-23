@@ -1,15 +1,11 @@
 const mongoose = require('mongoose');
 
 let userSchema = mongoose.Schema({
-  businessName:{
+  name:{
     type:String,
     required:true
   },
-  yearFounded:{
-    type:Number,
-    required:true
-  },
-  businessId:{
+  email:{
     type:String,
     required:true
   },

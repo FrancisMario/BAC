@@ -8,3 +8,7 @@ function initMap() {
     // The marker, positioned at Uluru
     var marker = new google.maps.Marker({position: uluru, map: map});
   }
+
+  setTimeout(function(){
+    document.getElementById('error-message').style.display = 'none'
+  }, 3000)

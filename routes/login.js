@@ -1,9 +1,9 @@
 var express = require('express');
 const Token = require('../models/token')
 const User = require('../models/user');
-const bcrypt = require('bcryptjs')
-const Joi = require('@hapi/joi')
-const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const Joi = require('@hapi/joi');
 var router = express.Router();
 var style =
   '#loader { \
@@ -50,168 +50,49 @@ var style =
   }';
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-    console.log("signup");
-  res.render('login',{login:true,style:style,title:"Signin"});
-});
-
-router.get('/register', function (req, res, next) {
+router.get('/', function (req, res, next) {
   console.log("signup");
-  res.render('signup', { style: style, title: "Signin" });
+  res.render('login', { login: true, style: style, title: "Signin" ,messages: req.flash('danger')});
 });
-
-//GET login page
-router.get('/login', (req, res, next) => {
-  res.render('login')
-})
-
-//Validation Schema For Registration
-const schema = Joi.object({
-  businessName: Joi.string().min(3).max(30).required(),
-  yearFounded: Joi.number().min(1999).max(2020).required(),
-  businessId: Joi.string().min(5).max(30).required(),
-  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
-})
 
 //Validation Schema for Logging In
 const loginSchema = Joi.object({
-  businessId: Joi.string().alphanum().min(5).max(30).required(),
+  email: Joi.string().email(),
   password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$'))
 })
 
 
-// Create new account => Signup
-router.post('/register', (req, res, next) => {
-  //Validate input from user
-  const { error } = schema.validate(req.body);
-  if (error) return res.status(400).json({
-    error: error.details[0].message
-  })
-
-  const newUser = new User({
-    businessName: req.body.businessName,
-    businessId: req.body.businessId,
-    yearFounded: req.body.yearFounded
-  })
-
-  bcrypt.genSalt(10, (err, salt) => {
-    bcrypt.hash(req.body.password, salt, (err, hash) => {
-      if (err) {
-        return res.status(500).json({
-          message: "Server error"
-        })
-      }
-      newUser.password = hash
-      newUser.save((err, success) => {
-        if (err) return res.status(500).json({
-          message: "Server error"
-        });
-        res.status(201).json({
-          message: "User created successfully"
-        })
-      })
-    })
-  })
-
+router.post('/', authenticated, (req, res, next) => {
+  passport.authenticate('local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/login',
+    failureFlash: true
+  })(req, res, next)
 });
 
-//Logging In
-router.post('/login', (req, res, next) => {
-  //Validate input from user
-  const { error } = loginSchema.validate(req.body);
-  if (error) return res.status(400).json({
-    error: error.details[0].message
-  })
+router.post('/logout', ensureAuthenticated,(req, res) => {
+  req.logout();
+  res.redirect('/signin')
+})
 
-  User.findOne({ businessId: req.body.businessId }, (err, user) => {
-    if (err) return res.status(500).json({
-      message: "Server error"
-    })
-    if (!user) return res.status(404).json({
-      message: "Business ID or Password Incorrect"
-    })
-    bcrypt.compare(req.body.password, user.password, (err, isMatch) => {
-      if (err) return res.status(500)
-      if (isMatch) {
-        loggedUser = { name: user.businessName, id: user._id }
-        const accessToken = generateAccessToken(loggedUser);
-        const refreshToken = jwt.sign(loggedUser, process.env.REFRESH_TOKEN_SECRET)
-        let newToken = new Token({
-          token: refreshToken
-        })
-        newToken.save((err, done) => {
-          if (err) return res.status(500).json({
-            message: "Could not store refresh token"
-          })
-        })
-        return res.status(200).json({
-          accessToken: accessToken,
-          refreshToken: refreshToken
-        })
-      } else {
-        return res.status(403).json({
-          message: "Business ID or Password Incorrect"
-        })
-      }
-    })
-  })
-});
-
-//Refresh Token
-router.post('/token', (req, res, next) => {
-  const refreshToken = req.body.token;
-  if (refreshToken == null) return res.status(401).json({
-    message: "Token cannot be null"
-  })
-  Token.findOne({ token: refreshToken }, (err, foundToken) => {
-    if (err) return res.status(500).json({ message: "There as been an unexpected error" })
-    if (foundToken == null) return res.status(403).json({ message: "Access denied" })
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-      if (err) return res.status(403).json({ message: "Access denied" })
-      loggedUser = { name: user.businessName, id: user._id }
-      const accessToken = generateAccessToken(loggedUser)
-      res.json({
-        accessToken: accessToken
-      })
-    })
-  })
-});
-
-//Logout or Simply Delete Token
-router.delete('/logout', (req, res) => {
-  Token.deleteOne({ token: req.body.token }, (err, done) => {
-    if (err) return res.status(403).json({ message: "Access denied" })
-    res.status(204).json({ message: "Token successfully deleted" })
-  })
-});
-
-
-
-//Generate Access Token
-function generateAccessToken(loggedUser) {
-  return jwt.sign(loggedUser, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+// Access Control
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    req.flash('danger', 'Please login');
+    res.redirect('/signin');
+  }
 }
 
-/* The function below is gonna be added as a middleware
- to all the protected routes that require authentication and most importantly, authorization */
-
-/*
-function authenticateToken(req,res,next){
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-
-  if(token == null) return res.status(401).json({
-    message:"Permission denied"
-  })
-
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if(err) return res.status(403).json({
-      message:"Permission denied"
-    })
-    req.user = user
+function authenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    req.flash('warning', 'You are already signed in')
+    res.redirect('/dashboard')
+  } else {
     next()
-  })
+  }
 }
 
-*/
+
 module.exports = router;
