@@ -8,6 +8,12 @@ router.get('/', function(req, res, next) {
     content_header:'Dashboard',
     breadcrumbs:['Home','Dashboard'],
     /**
+     * Config Values
+     */
+    config:{
+      map_api:process.env.GOOGLE_MAPS_API_KEY,
+    },
+    /**
      * Only 4 stats are supported for now 
      * Stat colors
      *    Blue = bg-info
