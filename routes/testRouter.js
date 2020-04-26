@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/',ensureAuthenticated, function(req, res, next) {
   res.render('dashboard', { 
     title: 'Dashboard Test',
     content_header:'Dashboard',
@@ -29,5 +29,14 @@ router.get('/', function(req, res, next) {
     ]
    });
 });
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  } else {
+    req.flash('danger', 'Please login');
+    res.redirect('/login');
+  }
+}
 
 module.exports = router;
