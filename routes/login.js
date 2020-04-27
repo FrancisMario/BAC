@@ -1,11 +1,12 @@
 var express = require('express');
 const Token = require('../models/token')
-const User = require('../models/user');
+const Business = require('../models/businness');
 const bcrypt = require('bcryptjs')
 const Joi = require('@hapi/joi')
 const jwt = require('jsonwebtoken');
 var router = express.Router();
 var style =
+// Todo Base64 encode this style string for cleaner code 
   '#loader { \
     transition: all 0.3s ease-in-out;\
     opacity: 1;\
@@ -49,21 +50,13 @@ var style =
     } \
   }';
 
-/* GET home page. */
+/* GET sign in page. */
 router.get('/', function(req, res, next) {
     console.log("signup");
   res.render('login',{login:true,style:style,title:"Signin"});
 });
 
-router.get('/register', function (req, res, next) {
-  console.log("signup");
-  res.render('signup', { style: style, title: "Signin" });
-});
 
-//GET login page
-router.get('/login', (req, res, next) => {
-  res.render('login')
-})
 
 //Validation Schema For Registration
 const schema = Joi.object({
@@ -88,7 +81,7 @@ router.post('/register', (req, res, next) => {
     error: error.details[0].message
   })
 
-  const newUser = new User({
+  const newBusiness = new Business({
     businessName: req.body.businessName,
     businessId: req.body.businessId,
     yearFounded: req.body.yearFounded
@@ -101,8 +94,8 @@ router.post('/register', (req, res, next) => {
           message: "Server error"
         })
       }
-      newUser.password = hash
-      newUser.save((err, success) => {
+      newBusiness.password = hash
+      newBusiness.save((err, success) => {
         if (err) return res.status(500).json({
           message: "Server error"
         });
@@ -123,7 +116,8 @@ router.post('/login', (req, res, next) => {
     error: error.details[0].message
   })
 
-  User.findOne({ businessId: req.body.businessId }, (err, user) => {
+  // added or condition to facilitate multiple id signin 
+  Business.findOne({ $or : {businessPhone: req.body.Id, businessEmail: req.body.Id}}, (err, user) => {
     if (err) return res.status(500).json({
       message: "Server error"
     })

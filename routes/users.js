@@ -1,17 +1,24 @@
 var express = require('express');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user')
+const User = require('../models/businness');
+const id = require('../controllers/id_generator.ts');
 var router = express.Router();
 
 /* GET users listing. */
 router.get('/', authenticateToken, function(req, res, next) {
   User.find({}, (err,users) => {
-    let response = {
+    // adding error handler
+    if (err) {
+      res.status(403).json({
+        message:"Server Error"
+      });
+    }
+    let response = {  
       users: users.map(user => {
         return {
-          businessName: user.businessName,
           businessId: user.businessId,
-          yeadrFounded: user.yeadrFounded
+          businessName: user.businessName,
+          yeadrFounded: user.yeadFounded,
         }
       })
     }
