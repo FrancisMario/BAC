@@ -1,0 +1,12 @@
+I had to make a system redesign becouse we were headed to alot of complexities further down the road
+
+
+System Change 1
+
+There are two types of accounts now
+    1: Admin account.
+    2: Business account (user).
+
+Because of the above changes SIGNING UP is no more a required feature.
+
+The initial 

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Branch = require('./branch');
 
 let BusinessSchema = mongoose.Schema({
   businessName:{
@@ -28,7 +27,6 @@ let BusinessSchema = mongoose.Schema({
     type:Object,
     require:true
   },
-  // different accounts for businesses to have multiple users accounts for diffrent staff
   account:{
     type:Object,
     require:true

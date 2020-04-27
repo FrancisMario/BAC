@@ -4,9 +4,11 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 const mongoose = require('mongoose');
-//var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const hbs = require('hbs');
+const session = require('express-session');
+const flash = require('connect-flash');
+const passport = require('passport');
 
 //Database connection
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true});
@@ -17,7 +19,7 @@ db.on('error', (err) => console.log(err));
 db.once('open', () => console.log('Database Connection established'))
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/register');
 var signupRouter = require('./routes/login');
 var testRouter = require('./routes/testRouter');
 
@@ -32,7 +34,6 @@ app.set();
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 hbs.registerPartials(__dirname + '/views/partials');
 
@@ -54,10 +55,36 @@ hbs.registerHelper('breadcrump_renderer',(array) => {
    return new hbs.SafeString(output);;
 });
 
+/* MIDDLEWARE FOR NEWLY INSTALLED PACKAGES */
+
+// Express Session Middleware
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: true
+}));
+
+// Express Messages Middleware
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+  res.locals.messages = require('express-messages')(req, res);
+  next();
+});
+
+// Passport Config
+require('./config/passport')(passport);
+// Passport Middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.get('*', function(req, res, next){
+  res.locals.user = req.user || null;
+  next();
+});
+
+
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/signup', signupRouter);
-app.use('/signin', signupRouter);
+app.use('/signup', usersRouter);
 app.use('/login', signupRouter);
 
 // Routes for testing ui

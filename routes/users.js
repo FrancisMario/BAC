@@ -1,6 +1,6 @@
 var express = require('express');
 const jwt = require('jsonwebtoken');
-const User = require('../models/businness');
+const User = require('../models/adminConfig');
 const id = require('../controllers/id_generator.ts');
 var router = express.Router();
 

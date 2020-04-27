@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
-
-let addressSchema = mongoose.Schema({
+/**
+ * Address
+ */
+let branch = mongoose.Schema({
   name:{
     type:String,
     required:true
@@ -10,10 +12,9 @@ let addressSchema = mongoose.Schema({
     required:true
   },
   coordinates:{
-    type:Object,
-    required:true
+    type:String,
+    required:true,
   }
 })
 
-
-module.exports = Address = mongoose.model('address', addressSchema);
+module.exports = mongoose.model('Branch',branch);

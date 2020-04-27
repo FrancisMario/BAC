@@ -251,5 +251,14 @@ function initMap() {
     var map = new google.maps.Map(
         document.getElementById('map'), {zoom: 11, center: serekunda,styles:style});
     // The marker, positioned at Uluru
+<<<<<<< HEAD
     var marker = new google.maps.Marker({position: serekunda, map: map});
   } 
+=======
+    var marker = new google.maps.Marker({position: uluru, map: map});
+  }
+
+  setTimeout(function(){
+    document.getElementById('error-message').style.display = 'none'
+  }, 3000)
+>>>>>>> 5b189617e3995a14263859297be4435c90ae8292
