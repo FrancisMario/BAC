@@ -2,8 +2,8 @@ var express = require('express');
 const Token = require('../models/token')
 const Business = require('../models/businness');
 const bcrypt = require('bcryptjs')
-const Joi = require('@hapi/joi')
-const jwt = require('jsonwebtoken');
+const Joi = require('@hapi/joi');
+const passport = require('passport')
 var router = express.Router();
 var style =
 // Todo Base64 encode this style string for cleaner code 

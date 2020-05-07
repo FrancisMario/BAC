@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Branch = require('./branch');
 
 let BusinessSchema = mongoose.Schema({
   businessName:{

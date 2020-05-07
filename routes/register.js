@@ -1,5 +1,5 @@
 var express = require('express');
-const User = require('../models/user');
+//const User = require('../models/userConfig');
 const Joi = require('@hapi/joi');
 const passport = require('passport');
 const bcrypt = require('bcryptjs')
@@ -79,6 +79,7 @@ router.get('/', function (req, res, next) {
 });
 
 // Create new account => Signup
+/*
 router.post('/', authenticated, (req, res, next) => {
   //Validate input from user
   const { error } = schema.validate(req.body);
@@ -113,6 +114,8 @@ router.post('/', authenticated, (req, res, next) => {
     })
   }
 });
+
+*/
 
 function authenticated(req, res, next) {
   if (req.isAuthenticated()) {
