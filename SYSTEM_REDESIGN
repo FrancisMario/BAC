@@ -7,6 +7,54 @@ There are two types of accounts now
     1: Admin account.
     2: Business account (user).
 
+The Admin Accounts will have the following features
+
+-   Business Account Activities
+    -   Register new business accounts to the system <CODE: N9TT>
+    -   Edit business account Details <CODE: N9G0>
+    -   Delete business accounts <CODE: NGE4>
+    -   Create a *ledger for business accounts <CODE: NGE4>
+    -   Modify business account *ledger details. <CODE: NSXF>
+    -   Delete a *ledger for business accounts. <CODE: NHYO>
+
+-   Admin Account Activities
+
+    -   Register new admin accounts to the system. <CODE: 2YNV>
+    -   Modify admin accounts details. <CODE: 2GNV>
+    -   Issue/Revoke admin account rights. <CODE: 2ARD>
+    -   Create admin groups <CODE: 2MOP> <grouping accounts with the same work and giving it a name so you can control those accounts as a group>
+    -   Delete accounts. <CODE: 2OT6>
+    -   Suspend accounts. <CODE: 2L4F> <admin won't be able to log into the system until the suspension period ends>
+
 Because of the above changes SIGNING UP is no more a required feature.
 
-The initial 
+The intitial user SYS_ADM will have the rights to create Admin account.
+    -   He will have all the rights in the system.
+    -   He bea able t lockdown and unlock the system.
+
+The Business accounts as o fnow will only have the following features for now.
+
+-   Update Address
+-   Update Contact Details
+-   Add *Branches 
+-   View *Ledgers
+-   View *Ledger Deposits
+-   Print *Ledger Deposit reciept 
+
+Authorisation Method
+    Basic Login Using email and password.
+
+
+#REFERENCES
+    
+    a. Ledger
+        A Ledger is a fund collection Record.
+            Fields:
+                Id: Ledger id <a 4 character alphanumeric string>
+                Name: Name of Ledger.
+                Description: Description of the ledger.
+                Amount: Amount of cash t be payed.
+                Due: Dates that the ledger amount should be payed.
+
+    b. CODE
+        a code that references the feature in code.
